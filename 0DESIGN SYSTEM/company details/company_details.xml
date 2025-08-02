@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+    <info>
+        <name>JK WINNERS INVESTMENT(PTY)Ltd</name>
+        <registration_number>2013/047375/07</registration_number>
+        <type>Private Company</type>
+    </info>
+    
+    <address>
+        <street>22 Sloane Street</street>
+        <suburb>Bryanston</suburb>
+        <province>GAUTENG</province>
+        <postal_code>1619</postal_code>
+        <country>South Africa</country>
+        <full_address>22 Sloane Street, Bryanston, GAUTENG 1619</full_address>
+    </address>
+    
+    <contact>
+        <email>info@jkwinnersinvestment.co.za</email>
+        <phone>010 085 3553</phone>
+        <whatsapp>0839887569</whatsapp>
+        <website></website>
+    </contact>
+    
+    <banking>
+        <account_name>JK Winners Investment (Pty)Ltd</account_name>
+        <bank>FNB</bank>
+        <branch_code>250655</branch_code>
+        <account_number>63151527133</account_number>
+        <account_type>Business</account_type>
+        <swift_code></swift_code>
+    </banking>
+    
+    <tax>
+        <vat_number></vat_number>
+        <tax_reference></tax_reference>
+        <default_tax_rate>15.0</default_tax_rate>
+    </tax>
+    
+    <business>
+        <industry>Investment</industry>
+        <established_year>2013</established_year>
+        <description>Investment Company</description>
+    </business>
+</company>
