@@ -1,7 +1,7 @@
-"""
+/*
 Enhanced web client for cloud-ready JKWI Information Management System
 This replaces the existing JavaScript-only frontend with a more robust, cloud-integrated solution
-"""
+*/
 
 class CloudJKWIApp {
     constructor() {
@@ -525,7 +525,7 @@ class CloudJKWIApp {
             tbody.innerHTML = members.map(member => `
                 <tr>
                     <td>${member.username}</td>
-                    <td>${member.fullName}</td>
+                    <td>${member.fullName || 'N/A'}</td>
                     <td>${member.email}</td>
                     <td>${member.division}</td>
                     <td><span class="status-${member.status.toLowerCase()}">${member.status}</span></td>
@@ -537,7 +537,396 @@ class CloudJKWIApp {
             `).join('');
         } catch (error) {
             console.error('Failed to load members:', error);
+            this.showNotification('Failed to load members', 'error');
         }
+    }
+
+    async loadCompany() {
+        try {
+            const company = await this.apiCall('/company');
+            document.getElementById('companyForm').innerHTML = `
+                <div class="form-group">
+                    <label for="companyName">Company Name:</label>
+                    <input type="text" id="companyName" value="${company.name || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label for="tradingName">Trading Name:</label>
+                    <input type="text" id="tradingName" value="${company.tradingName || ''}" required>
+                </div>
+                <div class="form-group">
+                    <label for="companyDescription">Description:</label>
+                    <textarea id="companyDescription" rows="4" required>${company.description || ''}</textarea>
+                </div>
+                <button type="submit" class="btn-primary">Update Company</button>
+            `;
+            
+            document.getElementById('companyForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.updateCompany();
+            });
+        } catch (error) {
+            console.error('Failed to load company:', error);
+            this.showNotification('Failed to load company information', 'error');
+        }
+    }
+
+    async updateCompany() {
+        try {
+            const companyData = {
+                name: document.getElementById('companyName').value,
+                tradingName: document.getElementById('tradingName').value,
+                description: document.getElementById('companyDescription').value
+            };
+            
+            await this.apiCall('/company', 'PUT', companyData);
+            this.showNotification('Company information updated successfully!', 'success');
+        } catch (error) {
+            this.showNotification('Failed to update company information', 'error');
+        }
+    }
+
+    async loadDirectors() {
+        try {
+            const directors = await this.apiCall('/directors');
+            const tbody = document.querySelector('#directorsTable tbody');
+            tbody.innerHTML = directors.map(director => `
+                <tr>
+                    <td>${director.name}</td>
+                    <td>${director.position}</td>
+                    <td>${director.division}</td>
+                    <td>${director.email}</td>
+                    <td>
+                        <button class="btn-edit" onclick="cloudApp.editDirector('${director.id}')">Edit</button>
+                        <button class="btn-delete" onclick="cloudApp.deleteDirector('${director.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Failed to load directors:', error);
+            this.showNotification('Failed to load directors', 'error');
+        }
+    }
+
+    async loadDivisions() {
+        try {
+            const divisions = await this.apiCall('/divisions');
+            const grid = document.getElementById('divisionsGrid');
+            grid.innerHTML = divisions.map(division => `
+                <div class="division-card">
+                    <h3>${division.name}</h3>
+                    <p>${division.description}</p>
+                    <div class="division-actions">
+                        <button class="btn-edit" onclick="cloudApp.editDivision('${division.id}')">Edit</button>
+                        <button class="btn-delete" onclick="cloudApp.deleteDivision('${division.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Failed to load divisions:', error);
+            this.showNotification('Failed to load divisions', 'error');
+        }
+    }
+
+    async loadPartnerships() {
+        try {
+            const partnerships = await this.apiCall('/partnerships') || [];
+            const grid = document.getElementById('partnershipsGrid');
+            grid.innerHTML = partnerships.map(partnership => `
+                <div class="partnership-card">
+                    <h3>${partnership.name}</h3>
+                    <p>${partnership.description}</p>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Failed to load partnerships:', error);
+            this.showNotification('Failed to load partnerships', 'error');
+        }
+    }
+
+    // Modal and CRUD operations
+    openDirectorModal(directorId = null) {
+        const modalHtml = `
+            <div class="modal" id="directorModal">
+                <div class="modal-content">
+                    <span class="close" onclick="cloudApp.closeModal('directorModal')">&times;</span>
+                    <h2>${directorId ? 'Edit Director' : 'Add Director'}</h2>
+                    <form id="directorForm">
+                        <input type="hidden" id="directorId" value="${directorId || ''}">
+                        <div class="form-group">
+                            <label for="directorName">Name:</label>
+                            <input type="text" id="directorName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="directorPosition">Position:</label>
+                            <input type="text" id="directorPosition" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="directorDivision">Division:</label>
+                            <select id="directorDivision" required>
+                                <option value="">Select Division</option>
+                                <option value="Mining Division">Mining Division</option>
+                                <option value="Infrastructure Division">Infrastructure Division</option>
+                                <option value="Farming Division">Farming Division</option>
+                                <option value="Service Division">Service Division</option>
+                                <option value="Finance Division">Finance Division</option>
+                                <option value="Legal Division">Legal Division</option>
+                                <option value="Media Division">Media Division</option>
+                                <option value="Social Division">Social Division</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="directorEmail">Email:</label>
+                            <input type="email" id="directorEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="directorPhone">Phone:</label>
+                            <input type="tel" id="directorPhone">
+                        </div>
+                        <button type="submit" class="btn-primary">Save Director</button>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('modalContainer').innerHTML = modalHtml;
+        document.getElementById('directorModal').style.display = 'block';
+        
+        document.getElementById('directorForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveDirector();
+        });
+        
+        // Load existing data if editing
+        if (directorId) {
+            this.loadDirectorData(directorId);
+        }
+    }
+
+    openMemberModal(memberId = null) {
+        const modalHtml = `
+            <div class="modal" id="memberModal">
+                <div class="modal-content">
+                    <span class="close" onclick="cloudApp.closeModal('memberModal')">&times;</span>
+                    <h2>${memberId ? 'Edit Member' : 'Add Member'}</h2>
+                    <form id="memberForm">
+                        <input type="hidden" id="memberId" value="${memberId || ''}">
+                        <div class="form-group">
+                            <label for="memberUsername">Username:</label>
+                            <input type="text" id="memberUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberFullName">Full Name:</label>
+                            <input type="text" id="memberFullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberEmail">Email:</label>
+                            <input type="email" id="memberEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberDivision">Division:</label>
+                            <select id="memberDivision" required>
+                                <option value="">Select Division</option>
+                                <option value="Mining Division">Mining Division</option>
+                                <option value="Infrastructure Division">Infrastructure Division</option>
+                                <option value="Farming Division">Farming Division</option>
+                                <option value="Service Division">Service Division</option>
+                                <option value="Finance Division">Finance Division</option>
+                                <option value="Legal Division">Legal Division</option>
+                                <option value="Media Division">Media Division</option>
+                                <option value="Social Division">Social Division</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="memberStatus">Status:</label>
+                            <select id="memberStatus" required>
+                                <option value="Active">Active</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">Save Member</button>
+                    </form>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('modalContainer').innerHTML = modalHtml;
+        document.getElementById('memberModal').style.display = 'block';
+        
+        document.getElementById('memberForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.saveMember();
+        });
+        
+        // Load existing data if editing
+        if (memberId) {
+            this.loadMemberData(memberId);
+        }
+    }
+
+    closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    async saveDirector() {
+        try {
+            const directorId = document.getElementById('directorId').value;
+            const directorData = {
+                name: document.getElementById('directorName').value,
+                position: document.getElementById('directorPosition').value,
+                division: document.getElementById('directorDivision').value,
+                email: document.getElementById('directorEmail').value,
+                phone: document.getElementById('directorPhone').value
+            };
+
+            if (directorId) {
+                await this.apiCall(`/directors/${directorId}`, 'PUT', directorData);
+                this.showNotification('Director updated successfully!', 'success');
+            } else {
+                await this.apiCall('/directors', 'POST', directorData);
+                this.showNotification('Director added successfully!', 'success');
+            }
+
+            this.closeModal('directorModal');
+            await this.loadDirectors();
+        } catch (error) {
+            this.showNotification('Failed to save director', 'error');
+        }
+    }
+
+    async saveMember() {
+        try {
+            const memberId = document.getElementById('memberId').value;
+            const memberData = {
+                username: document.getElementById('memberUsername').value,
+                fullName: document.getElementById('memberFullName').value,
+                email: document.getElementById('memberEmail').value,
+                division: document.getElementById('memberDivision').value,
+                status: document.getElementById('memberStatus').value
+            };
+
+            if (memberId) {
+                await this.apiCall(`/members/${memberId}`, 'PUT', memberData);
+                this.showNotification('Member updated successfully!', 'success');
+            } else {
+                await this.apiCall('/members', 'POST', memberData);
+                this.showNotification('Member added successfully!', 'success');
+            }
+
+            this.closeModal('memberModal');
+            await this.loadMembers();
+        } catch (error) {
+            this.showNotification('Failed to save member', 'error');
+        }
+    }
+
+    async editMember(id) {
+        this.openMemberModal(id);
+    }
+
+    async editDirector(id) {
+        this.openDirectorModal(id);
+    }
+
+    async deleteMember(id) {
+        if (confirm('Are you sure you want to delete this member?')) {
+            try {
+                await this.apiCall(`/members/${id}`, 'DELETE');
+                this.showNotification('Member deleted successfully!', 'success');
+                await this.loadMembers();
+            } catch (error) {
+                this.showNotification('Failed to delete member', 'error');
+            }
+        }
+    }
+
+    async deleteDirector(id) {
+        if (confirm('Are you sure you want to delete this director?')) {
+            try {
+                await this.apiCall(`/directors/${id}`, 'DELETE');
+                this.showNotification('Director deleted successfully!', 'success');
+                await this.loadDirectors();
+            } catch (error) {
+                this.showNotification('Failed to delete director', 'error');
+            }
+        }
+    }
+
+    async searchMembers(query) {
+        try {
+            const members = await this.apiCall('/members');
+            const filteredMembers = members.filter(member =>
+                member.username.toLowerCase().includes(query.toLowerCase()) ||
+                member.fullName.toLowerCase().includes(query.toLowerCase()) ||
+                member.email.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            const tbody = document.querySelector('#membersTable tbody');
+            tbody.innerHTML = filteredMembers.map(member => `
+                <tr>
+                    <td>${member.username}</td>
+                    <td>${member.fullName || 'N/A'}</td>
+                    <td>${member.email}</td>
+                    <td>${member.division}</td>
+                    <td><span class="status-${member.status.toLowerCase()}">${member.status}</span></td>
+                    <td>
+                        <button class="btn-edit" onclick="cloudApp.editMember('${member.id}')">Edit</button>
+                        <button class="btn-delete" onclick="cloudApp.deleteMember('${member.id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            console.error('Search failed:', error);
+        }
+    }
+
+    async exportMembers() {
+        try {
+            const members = await this.apiCall('/members');
+            const csv = this.convertToCSV(members);
+            this.downloadFile(csv, `JKWI_Members_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+            this.showNotification('Members exported successfully!', 'success');
+        } catch (error) {
+            this.showNotification('Failed to export members', 'error');
+        }
+    }
+
+    async exportAllData() {
+        try {
+            const data = await this.apiCall('/export');
+            const jsonData = JSON.stringify(data, null, 2);
+            this.downloadFile(jsonData, `JKWI_Full_Export_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+            this.showNotification('Data exported successfully!', 'success');
+        } catch (error) {
+            this.showNotification('Failed to export data', 'error');
+        }
+    }
+
+    convertToCSV(data) {
+        if (!data || data.length === 0) return '';
+        
+        const headers = Object.keys(data[0]);
+        const csvHeaders = headers.join(',');
+        const csvRows = data.map(row => 
+            headers.map(header => `"${row[header] || ''}"`).join(',')
+        );
+        
+        return [csvHeaders, ...csvRows].join('\n');
+    }
+
+    downloadFile(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    showBackupHistory() {
+        // Placeholder for backup history functionality
+        this.showNotification('Backup history feature coming soon!', 'info');
     }
 
     async syncData() {
