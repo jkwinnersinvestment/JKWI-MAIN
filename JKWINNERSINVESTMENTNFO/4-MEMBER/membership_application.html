@@ -964,6 +964,159 @@
     </div>
 
     <script>
+        // Cloud API Configuration
+        const API_BASE_URL = '../information-management-system/cloud-config';
+        const API_ENDPOINTS = {
+            health: `${API_BASE_URL}/api/health`,
+            register: `${API_BASE_URL}/api/register`,
+            members: `${API_BASE_URL}/api/members`
+        };
+
+        // Connection Status Management
+        class ConnectionManager {
+            constructor() {
+                this.status = 'disconnected';
+                this.statusElement = this.createStatusElement();
+                this.init();
+            }
+
+            createStatusElement() {
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'connection-status disconnected';
+                statusDiv.innerHTML = `
+                    <span class="status-light red"></span>
+                    <span>Connecting to JKWI Cloud...</span>
+                `;
+                document.body.appendChild(statusDiv);
+                return statusDiv;
+            }
+
+            async init() {
+                await this.checkConnection();
+                // Check connection every 30 seconds
+                setInterval(() => this.checkConnection(), 30000);
+            }
+
+            async checkConnection() {
+                this.updateStatus('connecting', 'Checking connection...');
+                
+                try {
+                    const response = await fetch(API_ENDPOINTS.health, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 5000
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === 'healthy') {
+                            this.updateStatus('connected', 'Connected to JKWI Information System');
+                        } else {
+                            this.updateStatus('disconnected', 'System maintenance in progress');
+                        }
+                    } else {
+                        this.updateStatus('disconnected', 'Connection failed - Working offline');
+                    }
+                } catch (error) {
+                    console.warn('Connection check failed:', error);
+                    this.updateStatus('disconnected', 'Connection failed - Working offline');
+                }
+            }
+
+            updateStatus(status, message) {
+                this.status = status;
+                this.statusElement.className = `connection-status ${status}`;
+                
+                const lightClass = status === 'connected' ? 'green' : 
+                                 status === 'connecting' ? 'orange' : 'red';
+                
+                this.statusElement.innerHTML = `
+                    <span class="status-light ${lightClass}"></span>
+                    <span>${message}</span>
+                `;
+            }
+
+            isConnected() {
+                return this.status === 'connected';
+            }
+        }
+
+        // Cloud API Client
+        class JKWICloudAPI {
+            constructor(connectionManager) {
+                this.connectionManager = connectionManager;
+            }
+
+            async submitApplication(memberData) {
+                if (!this.connectionManager.isConnected()) {
+                    // Fallback to localStorage if offline
+                    localStorage.setItem('jkwi_application_pending_' + Date.now(), JSON.stringify(memberData));
+                    throw new Error('Currently offline. Application saved locally and will be submitted when connection is restored.');
+                }
+
+                try {
+                    // First register the user account
+                    const registerResponse = await fetch(API_ENDPOINTS.register, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: memberData.jkwi_info.username,
+                            email: memberData.personal_info.email,
+                            full_name: memberData.personal_info.full_name,
+                            role: 'member'
+                        })
+                    });
+
+                    if (!registerResponse.ok) {
+                        const errorData = await registerResponse.json();
+                        throw new Error(errorData.error || 'Registration failed');
+                    }
+
+                    const registerData = await registerResponse.json();
+
+                    // Then submit the complete member application
+                    const memberResponse = await fetch(API_ENDPOINTS.members, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${registerData.token}`
+                        },
+                        body: JSON.stringify({
+                            ...memberData,
+                            submission_date: new Date().toISOString(),
+                            status: 'pending_approval',
+                            application_id: `JKWI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase()
+                        })
+                    });
+
+                    if (!memberResponse.ok) {
+                        const errorData = await memberResponse.json();
+                        throw new Error(errorData.error || 'Application submission failed');
+                    }
+
+                    const memberResult = await memberResponse.json();
+                    return {
+                        success: true,
+                        data: memberResult,
+                        application_id: memberResult.application_id || memberResult.id
+                    };
+
+                } catch (error) {
+                    console.error('API submission failed:', error);
+                    // Fallback to localStorage
+                    localStorage.setItem('jkwi_application_pending_' + Date.now(), JSON.stringify(memberData));
+                    throw error;
+                }
+            }
+        }
+
+        // Initialize connection manager and API client
+        const connectionManager = new ConnectionManager();
+        const cloudAPI = new JKWICloudAPI(connectionManager);
         // Progress bar functionality
         function updateProgress() {
             const form = document.getElementById('membershipForm');
