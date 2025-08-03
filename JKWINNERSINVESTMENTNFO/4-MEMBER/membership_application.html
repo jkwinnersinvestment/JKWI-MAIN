@@ -1152,23 +1152,27 @@
             });
         });
 
-        // Form validation and submission
-        document.getElementById('membershipForm').addEventListener('submit', function(e) {
+        // Form submission with cloud integration
+        document.getElementById('membershipForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Collect form data
             const formData = new FormData(this);
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            // Disable submit button and show loading
+            submitButton.disabled = true;
+            submitButton.textContent = '🚀 Submitting to JKWI Cloud...';
+            
+            // Prepare member data
             const memberData = {
-                member_info: {
-                    full_name: formData.get('firstName') + ' Winner ' + formData.get('lastName'),
+                personal_info: {
+                    full_name: formData.get('fullName'),
                     first_name: formData.get('firstName'),
                     last_name: formData.get('lastName'),
                     date_of_birth: formData.get('dateOfBirth'),
                     gender: formData.get('gender'),
-                    nationality: formData.get('nationality'),
-                    id_number: formData.get('idNumber')
-                },
-                contact_info: {
+                    id_number: formData.get('idNumber'),
                     email: formData.get('email'),
                     phone_primary: formData.get('phonePrimary'),
                     phone_secondary: formData.get('phoneSecondary'),
@@ -1199,17 +1203,44 @@
                     email: formData.get('emergencyEmail')
                 }
             };
-            
-            // Store in localStorage for now (in production, send to server)
-            localStorage.setItem('jkwi_application_' + Date.now(), JSON.stringify(memberData));
-            
-            // Show success message with JKWI branding
-            alert('🏆 Application submitted successfully! 🏆\n\nWelcome to the Winners community!\nYou will receive a confirmation email shortly with your JKWI application reference number.');
-            
-            // Reset form
-            this.reset();
-            document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
-            updateProgress();
+
+            try {
+                // Submit to cloud system
+                const result = await cloudAPI.submitApplication(memberData);
+                
+                // Show success message with application ID
+                const successMessage = `🏆 Application submitted successfully to JKWI Cloud! 🏆\n\n` +
+                    `Welcome to the Winners community!\n` +
+                    `Application ID: ${result.application_id}\n\n` +
+                    `Your application has been stored securely in our GitHub repository.\n` +
+                    `You will receive a confirmation email shortly with your JKWI application reference number.`;
+                
+                alert(successMessage);
+                
+                // Reset form on success
+                this.reset();
+                document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
+                updateProgress();
+                
+            } catch (error) {
+                console.error('Submission error:', error);
+                
+                // Show appropriate error message
+                const errorMessage = error.message.includes('offline') ? 
+                    `📡 Currently offline - Application saved locally!\n\n` +
+                    `Your application has been saved and will be automatically\n` +
+                    `submitted to the JKWI Cloud when connection is restored.\n\n` +
+                    `Thank you for joining the Winners community!` :
+                    `❌ Submission failed: ${error.message}\n\n` +
+                    `Your application has been saved locally as backup.\n` +
+                    `Please try again when the connection is restored.`;
+                
+                alert(errorMessage);
+            } finally {
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
         });
 
         // Add event listeners for progress tracking
