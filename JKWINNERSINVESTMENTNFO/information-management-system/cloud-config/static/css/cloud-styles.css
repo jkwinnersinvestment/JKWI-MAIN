@@ -1,4 +1,12 @@
 /* Cloud-Ready JKWI Management System Styles */
+/* 
+ * Fixed Issues:
+ * - Completed incomplete box-shadow property in .content-section
+ * - Resolved duplicate .status-active class by renaming to .status-text-active
+ * - Added vendor prefixes for backdrop-filter and appearance properties
+ * - Implemented proper dark mode support using CSS variables
+ * - Enhanced browser compatibility
+ */
 
 /* Global Styles */
 * {
@@ -259,7 +267,7 @@ body {
     font-weight: 700;
 }
 
-.status-active {
+.status-text-active {
     color: #27ae60 !important;
 }
 
@@ -571,6 +579,7 @@ tr:hover {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
 }
 
@@ -680,6 +689,8 @@ tr:hover {
     background-position: right 8px center;
     background-repeat: no-repeat;
     background-size: 16px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
     padding-right: 40px;
 }
@@ -843,7 +854,7 @@ tr:hover {
     font-size: 0.9rem;
 }
 
-/* Dark Mode Support (for future) */
+/* Dark Mode Support */
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-color: #1a1a1a;
@@ -851,4 +862,82 @@ tr:hover {
         --card-bg: #2d2d2d;
         --border-color: #404040;
     }
+    
+    body {
+        background: var(--bg-color);
+        color: var(--text-color);
+    }
+    
+    .content-section {
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+    
+    .modal-content {
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+    
+    table {
+        background: var(--card-bg);
+        color: var(--text-color);
+    }
+    
+    th {
+        background: var(--border-color);
+        color: var(--text-color);
+    }
+}
+
+/* Demo Data Loader */
+.demo-data-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f8f9fa;
+    color: #333;
+    flex-direction: column;
+}
+
+.demo-data-loader h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.demo-data-loader p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #7f8c8d;
+}
+
+.demo-data-loader button {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.demo-data-loader button:hover {
+    transform: translateY(-2px);
+}
+
+.demo-data-loader .spinner {
+    margin-top: 1rem;
+    width: 24px;
+    height: 24px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
 }

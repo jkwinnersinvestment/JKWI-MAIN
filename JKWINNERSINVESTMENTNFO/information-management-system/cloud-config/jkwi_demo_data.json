@@ -1,0 +1,513 @@
+{
+  "members": [
+    {
+      "id": "mem001",
+      "username": "sipho.mthembu123",
+      "fullName": "Sipho Mthembu",
+      "firstName": "Sipho",
+      "surname": "Mthembu",
+      "email": "sipho.mthembu@jkwi.co.za",
+      "phone": "+27-11-456-7890",
+      "address": {
+        "street": "123 Main Road",
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "postal_code": "2001",
+        "country": "South Africa"
+      },
+      "division": "Mining Division",
+      "memberType": "Executive",
+      "status": "Active",
+      "joinDate": "2023-01-15",
+      "membershipNumber": "JKWI-2023-0001",
+      "emergencyContact": {
+        "name": "Nomsa Mthembu",
+        "phone": "+27-11-456-7891",
+        "relationship": "Spouse"
+      },
+      "skills": ["Leadership", "Mining Operations", "Project Management"],
+      "notes": "Experienced mining executive with 15 years in the industry"
+    },
+    {
+      "id": "mem002",
+      "username": "lindiwe.dlamini456",
+      "fullName": "Lindiwe Dlamini",
+      "firstName": "Lindiwe",
+      "surname": "Dlamini",
+      "email": "lindiwe.dlamini@jkwi.co.za",
+      "phone": "+27-21-567-8901",
+      "address": {
+        "street": "456 Loop Street",
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "postal_code": "8001",
+        "country": "South Africa"
+      },
+      "division": "Finance Division",
+      "memberType": "Premium",
+      "status": "Active",
+      "joinDate": "2023-02-20",
+      "membershipNumber": "JKWI-2023-0002",
+      "emergencyContact": {
+        "name": "Thabo Dlamini",
+        "phone": "+27-21-567-8902",
+        "relationship": "Brother"
+      },
+      "skills": ["Financial Analysis", "Investment Management", "Risk Assessment"],
+      "notes": "Certified CA(SA) with expertise in investment banking"
+    },
+    {
+      "id": "mem003",
+      "username": "mandla.zulu789",
+      "fullName": "Mandla Zulu",
+      "firstName": "Mandla",
+      "surname": "Zulu",
+      "email": "mandla.zulu@jkwi.co.za",
+      "phone": "+27-31-678-9012",
+      "address": {
+        "street": "789 Market Street",
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "postal_code": "4001",
+        "country": "South Africa"
+      },
+      "division": "Infrastructure Division",
+      "memberType": "Regular",
+      "status": "Active",
+      "joinDate": "2023-03-10",
+      "membershipNumber": "JKWI-2023-0003",
+      "emergencyContact": {
+        "name": "Zanele Zulu",
+        "phone": "+27-31-678-9013",
+        "relationship": "Sister"
+      },
+      "skills": ["Construction Management", "Civil Engineering", "Quality Control"],
+      "notes": "Civil engineer specializing in large-scale infrastructure projects"
+    },
+    {
+      "id": "mem004",
+      "username": "naledi.mokoena111",
+      "fullName": "Naledi Mokoena",
+      "firstName": "Naledi",
+      "surname": "Mokoena",
+      "email": "naledi.mokoena@jkwi.co.za",
+      "phone": "+27-12-789-0123",
+      "address": {
+        "street": "111 Church Street",
+        "city": "Pretoria",
+        "province": "Gauteng",
+        "postal_code": "0001",
+        "country": "South Africa"
+      },
+      "division": "Legal Division",
+      "memberType": "Premium",
+      "status": "Active",
+      "joinDate": "2023-04-05",
+      "membershipNumber": "JKWI-2023-0004",
+      "emergencyContact": {
+        "name": "Bongani Mokoena",
+        "phone": "+27-12-789-0124",
+        "relationship": "Husband"
+      },
+      "skills": ["Corporate Law", "Compliance", "Contract Negotiation"],
+      "notes": "Senior attorney with expertise in mining and corporate law"
+    },
+    {
+      "id": "mem005",
+      "username": "tshepo.maluleke222",
+      "fullName": "Tshepo Maluleke",
+      "firstName": "Tshepo",
+      "surname": "Maluleke",
+      "email": "tshepo.maluleke@jkwi.co.za",
+      "phone": "+27-11-890-1234",
+      "address": {
+        "street": "222 Commissioner Street",
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "postal_code": "2001",
+        "country": "South Africa"
+      },
+      "division": "Farming Division",
+      "memberType": "Regular",
+      "status": "Pending",
+      "joinDate": "2024-01-15",
+      "membershipNumber": "JKWI-2024-0001",
+      "emergencyContact": {
+        "name": "Nonhlanhla Maluleke",
+        "phone": "+27-11-890-1235",
+        "relationship": "Wife"
+      },
+      "skills": ["Agricultural Science", "Sustainable Farming", "Crop Management"],
+      "notes": "Agricultural specialist with focus on sustainable farming practices"
+    },
+    {
+      "id": "mem006",
+      "username": "precious.nkomo333",
+      "fullName": "Precious Nkomo",
+      "firstName": "Precious",
+      "surname": "Nkomo",
+      "email": "precious.nkomo@jkwi.co.za",
+      "phone": "+27-21-901-2345",
+      "address": {
+        "street": "333 Long Street",
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "postal_code": "8001",
+        "country": "South Africa"
+      },
+      "division": "Media Division",
+      "memberType": "Regular",
+      "status": "Active",
+      "joinDate": "2023-06-20",
+      "membershipNumber": "JKWI-2023-0006",
+      "emergencyContact": {
+        "name": "Lucky Nkomo",
+        "phone": "+27-21-901-2346",
+        "relationship": "Brother"
+      },
+      "skills": ["Marketing", "Public Relations", "Social Media Management"],
+      "notes": "Communications specialist with media industry experience"
+    },
+    {
+      "id": "mem007",
+      "username": "kagiso.ndlovu444",
+      "fullName": "Kagiso Ndlovu",
+      "firstName": "Kagiso",
+      "surname": "Ndlovu",
+      "email": "kagiso.ndlovu@jkwi.co.za",
+      "phone": "+27-31-012-3456",
+      "address": {
+        "street": "444 Fox Street",
+        "city": "Durban",
+        "province": "KwaZulu-Natal",
+        "postal_code": "4001",
+        "country": "South Africa"
+      },
+      "division": "Service Division",
+      "memberType": "Regular",
+      "status": "Active",
+      "joinDate": "2023-07-12",
+      "membershipNumber": "JKWI-2023-0007",
+      "emergencyContact": {
+        "name": "Palesa Ndlovu",
+        "phone": "+27-31-012-3457",
+        "relationship": "Sister"
+      },
+      "skills": ["Customer Service", "Operations Management", "Quality Assurance"],
+      "notes": "Service operations manager with excellent customer relations skills"
+    },
+    {
+      "id": "mem008",
+      "username": "lerato.molefe555",
+      "fullName": "Lerato Molefe",
+      "firstName": "Lerato",
+      "surname": "Molefe",
+      "email": "lerato.molefe@jkwi.co.za",
+      "phone": "+27-51-123-4567",
+      "address": {
+        "street": "555 President Brand Street",
+        "city": "Bloemfontein",
+        "province": "Free State",
+        "postal_code": "9301",
+        "country": "South Africa"
+      },
+      "division": "Social Division",
+      "memberType": "Premium",
+      "status": "Active",
+      "joinDate": "2023-08-18",
+      "membershipNumber": "JKWI-2023-0008",
+      "emergencyContact": {
+        "name": "Sizani Molefe",
+        "phone": "+27-51-123-4568",
+        "relationship": "Mother"
+      },
+      "skills": ["Community Development", "Social Work", "Project Coordination"],
+      "notes": "Community development specialist focused on social impact programs"
+    },
+    {
+      "id": "mem009",
+      "username": "mpho.mashaba666",
+      "fullName": "Mpho Mashaba",
+      "firstName": "Mpho",
+      "surname": "Mashaba",
+      "email": "mpho.mashaba@jkwi.co.za",
+      "phone": "+27-11-234-5678",
+      "address": {
+        "street": "666 Jan Smuts Avenue",
+        "city": "Johannesburg",
+        "province": "Gauteng",
+        "postal_code": "2196",
+        "country": "South Africa"
+      },
+      "division": "Mining Division",
+      "memberType": "Regular",
+      "status": "Active",
+      "joinDate": "2023-09-25",
+      "membershipNumber": "JKWI-2023-0009",
+      "emergencyContact": {
+        "name": "Ntombi Mashaba",
+        "phone": "+27-11-234-5679",
+        "relationship": "Wife"
+      },
+      "skills": ["Mining Engineering", "Safety Management", "Environmental Compliance"],
+      "notes": "Mining engineer with focus on safety and environmental standards"
+    },
+    {
+      "id": "mem010",
+      "username": "dumisani.mabaso777",
+      "fullName": "Dumisani Mabaso",
+      "firstName": "Dumisani",
+      "surname": "Mabaso",
+      "email": "dumisani.mabaso@jkwi.co.za",
+      "phone": "+27-21-345-6789",
+      "address": {
+        "street": "777 Adderley Street",
+        "city": "Cape Town",
+        "province": "Western Cape",
+        "postal_code": "8001",
+        "country": "South Africa"
+      },
+      "division": "Finance Division",
+      "memberType": "Executive",
+      "status": "Active",
+      "joinDate": "2022-10-10",
+      "membershipNumber": "JKWI-2022-0010",
+      "emergencyContact": {
+        "name": "Beauty Mabaso",
+        "phone": "+27-21-345-6790",
+        "relationship": "Daughter"
+      },
+      "skills": ["Investment Banking", "Financial Planning", "Risk Management"],
+      "notes": "Senior financial advisor with extensive investment experience"
+    }
+  ],
+  "directors": [
+    {
+      "id": "dir001",
+      "fullName": "Justice Motsepe",
+      "firstName": "Justice",
+      "surname": "Motsepe",
+      "email": "justice.motsepe@jkwi.co.za",
+      "phone": "+27-11-555-0001",
+      "division": "Mining Division",
+      "position": "Division Director",
+      "experience": 20,
+      "qualifications": ["MBA", "Mining Engineering", "PMP"],
+      "startDate": "2019-01-01",
+      "salary": 1500000,
+      "status": "Active",
+      "achievements": [
+        "Led R50M mining expansion project",
+        "Increased division efficiency by 35%",
+        "Managed team of 150 people"
+      ]
+    },
+    {
+      "id": "dir002",
+      "fullName": "Faith Ramaphosa",
+      "firstName": "Faith",
+      "surname": "Ramaphosa",
+      "email": "faith.ramaphosa@jkwi.co.za",
+      "phone": "+27-11-555-0002",
+      "division": "Finance Division",
+      "position": "Division Director",
+      "experience": 18,
+      "qualifications": ["CA(SA)", "MBA", "CFA"],
+      "startDate": "2019-02-01",
+      "salary": 1400000,
+      "status": "Active",
+      "achievements": [
+        "Managed R2B investment portfolio",
+        "Reduced operational costs by 25%",
+        "Led successful IPO preparation"
+      ]
+    },
+    {
+      "id": "dir003",
+      "fullName": "Hope Sisulu",
+      "firstName": "Hope",
+      "surname": "Sisulu",
+      "email": "hope.sisulu@jkwi.co.za",
+      "phone": "+27-11-555-0003",
+      "division": "Infrastructure Division",
+      "position": "Division Director",
+      "experience": 22,
+      "qualifications": ["BSc Civil Engineering", "MBA"],
+      "startDate": "2019-03-01",
+      "salary": 1350000,
+      "status": "Active",
+      "achievements": [
+        "Completed R800M infrastructure project",
+        "Improved project delivery time by 30%",
+        "Supervised 200+ construction workers"
+      ]
+    },
+    {
+      "id": "dir004",
+      "fullName": "Grace Malema",
+      "firstName": "Grace",
+      "surname": "Malema",
+      "email": "grace.malema@jkwi.co.za",
+      "phone": "+27-11-555-0004",
+      "division": "Legal Division",
+      "position": "Division Director",
+      "experience": 16,
+      "qualifications": ["LLB", "LLM", "Admitted Attorney"],
+      "startDate": "2019-04-01",
+      "salary": 1200000,
+      "status": "Active",
+      "achievements": [
+        "Won major mining rights case",
+        "Established corporate compliance framework",
+        "Reduced legal costs by 20%"
+      ]
+    }
+  ],
+  "divisions": [
+    {
+      "name": "Finance Division",
+      "description": "Managing financial operations, investments, and treasury functions",
+      "head": "Faith Ramaphosa",
+      "budget": 5000000,
+      "color": "#27ae60",
+      "totalMembers": 2,
+      "totalDirectors": 1
+    },
+    {
+      "name": "Mining Division",
+      "description": "Overseeing mining operations, exploration, and mineral rights",
+      "head": "Justice Motsepe",
+      "budget": 15000000,
+      "color": "#8b4513",
+      "totalMembers": 2,
+      "totalDirectors": 1
+    },
+    {
+      "name": "Infrastructure Division",
+      "description": "Managing construction, development, and infrastructure projects",
+      "head": "Hope Sisulu",
+      "budget": 12000000,
+      "color": "#3498db",
+      "totalMembers": 1,
+      "totalDirectors": 1
+    },
+    {
+      "name": "Farming Division",
+      "description": "Agricultural operations, livestock, and sustainable farming practices",
+      "head": "TBD",
+      "budget": 8000000,
+      "color": "#2ecc71",
+      "totalMembers": 1,
+      "totalDirectors": 0
+    },
+    {
+      "name": "Legal Division",
+      "description": "Legal compliance, contracts, and regulatory affairs",
+      "head": "Grace Malema",
+      "budget": 3000000,
+      "color": "#9b59b6",
+      "totalMembers": 1,
+      "totalDirectors": 1
+    },
+    {
+      "name": "Media Division",
+      "description": "Communications, public relations, and media management",
+      "head": "TBD",
+      "budget": 2500000,
+      "color": "#e74c3c",
+      "totalMembers": 1,
+      "totalDirectors": 0
+    },
+    {
+      "name": "Service Division",
+      "description": "Customer service, support operations, and member relations",
+      "head": "TBD",
+      "budget": 4000000,
+      "color": "#f39c12",
+      "totalMembers": 1,
+      "totalDirectors": 0
+    },
+    {
+      "name": "Social Division",
+      "description": "Community outreach, CSR programs, and social development",
+      "head": "TBD",
+      "budget": 3500000,
+      "color": "#1abc9c",
+      "totalMembers": 1,
+      "totalDirectors": 0
+    }
+  ],
+  "company": {
+    "name": "JK Winners Investment",
+    "registrationNumber": "2019/123456/07",
+    "taxNumber": "9876543210",
+    "vatNumber": "4567890123",
+    "founded": "2019",
+    "description": "JK Winners Investment is a diversified investment company focused on mining, agriculture, infrastructure, and financial services across South Africa.",
+    "vision": "To be the leading investment company driving sustainable economic growth and community development in South Africa.",
+    "mission": "Empowering communities through strategic investments, creating value for stakeholders, and contributing to South Africa's economic transformation.",
+    "address": {
+      "street": "123 Sandton Drive, Sandton City",
+      "city": "Johannesburg",
+      "province": "Gauteng",
+      "postal_code": "2196",
+      "country": "South Africa"
+    },
+    "contact": {
+      "phone": "+27-11-784-5000",
+      "fax": "+27-11-784-5001",
+      "email": "info@jkwi.co.za",
+      "website": "https://www.jkwinnersinvestment.co.za"
+    },
+    "totalEmployees": 500,
+    "totalMembers": 10,
+    "totalDirectors": 4,
+    "totalDivisions": 8,
+    "establishedYear": 2019
+  },
+  "partnerships": [
+    {
+      "id": "part001",
+      "companyName": "Anglo American",
+      "partnershipType": "Strategic Alliance",
+      "description": "Strategic partnership focusing on mining operations and mineral exploration",
+      "startDate": "2023-01-15",
+      "value": 25000000,
+      "status": "Active",
+      "contactPerson": {
+        "name": "Sarah Williams",
+        "email": "sarah.williams@angloamerican.com",
+        "phone": "+27-11-638-9111",
+        "position": "Partnership Manager"
+      }
+    },
+    {
+      "id": "part002",
+      "companyName": "Standard Bank",
+      "partnershipType": "Financial Partnership",
+      "description": "Banking and financial services partnership for investment funding",
+      "startDate": "2022-06-01",
+      "value": 50000000,
+      "status": "Active",
+      "contactPerson": {
+        "name": "Michael Johnson",
+        "email": "michael.johnson@standardbank.co.za",
+        "phone": "+27-11-631-0000",
+        "position": "Corporate Banking Director"
+      }
+    }
+  ],
+  "metadata": {
+    "generated_at": "2024-08-03T12:00:00Z",
+    "generated_by": "JKWI Demo Data Generator",
+    "version": "1.0",
+    "total_records": {
+      "members": 10,
+      "directors": 4,
+      "divisions": 8,
+      "partnerships": 2
+    },
+    "description": "Demo data for JKWI cloud system testing and development",
+    "notes": "This data represents realistic South African business information for demonstration purposes"
+  }
+}
