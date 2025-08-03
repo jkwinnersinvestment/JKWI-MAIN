@@ -60,6 +60,11 @@ class DataManager {
             this.data = { ...this.data, ...JSON.parse(savedData) };
         }
         this.addActivity('System initialized');
+        
+        // Auto-load demo members if no existing data
+        if (this.data.members.length === 1) { // Only has the default demo member
+            this.loadDemoMembers();
+        }
     }
 
     // Save data to localStorage
@@ -286,6 +291,26 @@ class DataManager {
             totalDivisions: this.data.divisions.length,
             totalActivities: this.data.activities.length
         };
+    }
+
+    // Demo member methods
+    loadDemoMembers() {
+        // Demo members will be loaded from demo_members.js if available
+        if (typeof demoMembers !== 'undefined' && Array.isArray(demoMembers)) {
+            demoMembers.forEach(member => {
+                const existing = this.data.members.find(m => m.username === member.username);
+                if (!existing) {
+                    this.data.members.push({
+                        ...member,
+                        id: this.data.members.length > 0 ? Math.max(...this.data.members.map(m => m.id)) + 1 : 1
+                    });
+                }
+            });
+            this.saveData();
+            this.addActivity(`Loaded ${demoMembers.length} demo members`);
+            return demoMembers.length;
+        }
+        return 0;
     }
 }
 
