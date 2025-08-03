@@ -1,0 +1,37 @@
+# Enhanced requirements for cloud-ready JKWI system
+Flask==2.3.2
+Flask-CORS==4.0.0
+Flask-JWT-Extended==4.5.2
+Werkzeug==2.3.6
+python-dotenv==1.0.0
+
+# Database options
+firebase-admin==6.2.0
+SQLAlchemy==2.0.19
+psycopg2-binary==2.9.6
+
+# Web and API
+gunicorn==21.2.0
+requests==2.31.0
+
+# Development and testing
+pytest==7.4.0
+pytest-flask==1.2.0
+black==23.7.0
+flake8==6.0.0
+
+# Security and validation
+marshmallow==3.20.1
+email-validator==2.0.0
+bcrypt==4.0.1
+
+# Monitoring and logging
+sentry-sdk[flask]==1.29.2
+
+# Cloud deployment
+google-cloud-storage==2.10.0
+boto3==1.28.25  # For AWS S3
+
+# Real-time features
+flask-socketio==5.3.5
+eventlet==0.33.3
