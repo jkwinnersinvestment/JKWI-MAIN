@@ -1,0 +1,31 @@
+{
+    "companyName": "JK Winners Investment",
+    "tagline": "Your Gateway to Investment Excellence",
+    "description": "JK Winners Investment (JKWI) is a comprehensive investment company structured to provide excellence across multiple sectors. Our organization is built on a foundation of integrity, innovation, and sustainable growth.",
+    "mission": "To empower our members and stakeholders through innovative investment solutions and strategic partnerships.",
+    "vision": "To be a leading investment firm recognized for our commitment to excellence and sustainable growth.",
+    "values": [
+        "Integrity",
+        "Innovation",
+        "Sustainability",
+        "Collaboration",
+        "Excellence"
+    ],
+    "structure": {
+        "president": "John Doe",
+        "boardMembers": [
+            "Jane Smith",
+            "Emily Johnson",
+            "Michael Brown"
+        ],
+        "divisionDirectors": [
+            "Alice Davis",
+            "Robert Wilson",
+            "Linda Garcia"
+        ],
+        "agents": [
+            "Chris Martinez",
+            "Patricia Hernandez"
+        ]
+    }
+}

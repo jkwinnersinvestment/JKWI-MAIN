@@ -1,0 +1,4 @@
+codes
+login command
+login username text must be the same even in cabs to the text in the nodepad's in the first sentence after the word(username: ) and login password text must be the same even in cabs to the text in the nodepad's in the second sentence after the word(password: ) from the notepad with the link(https://jkwinnersinvestment.github.io/JKWI-WEB/login
+/logins.txt)

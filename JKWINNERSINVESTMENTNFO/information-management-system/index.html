@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JKWI Information Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.admin-container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
+    grid-template-areas: 
+        "sidebar header"
+        "sidebar main";
+}
+
+.admin-header {
+    grid-area: header;
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.admin-header h1 {
+    font-size: 1.2rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logout-btn {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.logout-btn:hover {
+    background: #c0392b;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    background: #34495e;
+    padding: 1rem 0;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar li {
+    margin-bottom: 0.5rem;
+}
+
+.nav-link {
+    display: block;
+    padding: 1rem 1.5rem;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: #2c3e50;
+    border-right: 3px solid #3498db;
+}
+
+.main-content {
+    grid-area: main;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.stat-card h3 {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.status-active {
+    color: #27ae60;
+}
+
+.recent-activities {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recent-activities h3 {
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.recent-activities ul {
+    list-style: none;
+}
+
+.recent-activities li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.timestamp {
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+.form-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 600px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.action-buttons {
+    margin-bottom: 1.5rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 0.5rem;
+    transition: background 0.3s;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+tr:hover {
+    background: #f8f9fa;
+}
+
+.divisions-grid,
+.partnerships-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.division-card,
+.partnership-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.division-card h3,
+.partnership-card h3 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.division-card p,
+.partnership-card p {
+    color: #7f8c8d;
+    margin-bottom: 1rem;
+}
+
+.card-actions {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+.btn-edit,
+.btn-delete {
+    padding: 0.25rem 0.5rem;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 0.25rem;
+}
+
+.btn-edit {
+    background: #f39c12;
+    color: white;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.search-container {
+    margin-bottom: 1rem;
+}
+
+.search-container input {
+    width: 300px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.close {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.close:hover {
+    color: #2c3e50;
+}
+
+.generator-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.preview-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px dashed #ddd;
+    text-align: center;
+    color: #7f8c8d;
+}
+
+.backup-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.backup-actions {
+    margin-bottom: 2rem;
+}
+
+.backup-list {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+}
+
+.backup-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px auto 1fr;
+        grid-template-areas: 
+            "header"
+            "sidebar"
+            "main";
+    }
+    
+    .sidebar {
+        padding: 0.5rem 0;
+    }
+    
+    .sidebar ul {
+        display: flex;
+        overflow-x: auto;
+    }
+    
+    .sidebar li {
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .divisions-grid,
+    .partnerships-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>JKWI Information Management System</h1>
+            <div class="user-info">
+                <span>Administrator</span>
+                <button class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#dashboard" class="nav-link active" data-section="dashboard">Dashboard</a></li>
+                <li><a href="#company" class="nav-link" data-section="company">Company Structure</a></li>
+                <li><a href="#directors" class="nav-link" data-section="directors">Directors</a></li>
+                <li><a href="#divisions" class="nav-link" data-section="divisions">Divisions</a></li>
+                <li><a href="#partnerships" class="nav-link" data-section="partnerships">Work With Us</a></li>
+                <li><a href="#members" class="nav-link" data-section="members">Members</a></li>
+                <li><a href="#website" class="nav-link" data-section="website">Website Generator</a></li>
+                <li><a href="#backup" class="nav-link" data-section="backup">Backup & Export</a></li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <h2>Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Members</h3>
+                        <span class="stat-number" id="totalMembers">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Active Divisions</h3>
+                        <span class="stat-number" id="totalDivisions">8</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Directors</h3>
+                        <span class="stat-number" id="totalDirectors">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <h3>System Status</h3>
+                        <span class="stat-number status-active">Active</span>
+                    </div>
+                </div>
+                
+                <div class="recent-activities">
+                    <h3>Recent Activities</h3>
+                    <ul id="activityList">
+                        <li>System initialized - <span class="timestamp"></span></li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Company Structure Section -->
+            <section id="company" class="content-section">
+                <h2>Company Structure Management</h2>
+                <div class="form-container">
+                    <form id="companyForm">
+                        <div class="form-group">
+                            <label for="companyName">Company Name:</label>
+                            <input type="text" id="companyName" value="JK Winners Investment" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tradingName">Trading Name:</label>
+                            <input type="text" id="tradingName" value="JKWI" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="companyDescription">Company Description:</label>
+                            <textarea id="companyDescription" rows="4" required>JK Winners Investment (JKWI) is a comprehensive investment company structured to provide excellence across multiple sectors.</textarea>
+                        </div>
+                        <button type="submit">Update Company Info</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Directors Section -->
+            <section id="directors" class="content-section">
+                <h2>Directors Management</h2>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openDirectorModal()">Add New Director</button>
+                </div>
+                <div class="table-container">
+                    <table id="directorsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Division</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Directors will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Divisions Section -->
+            <section id="divisions" class="content-section">
+                <h2>Divisions Management</h2>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openDivisionModal()">Add New Division</button>
+                </div>
+                <div class="divisions-grid" id="divisionsGrid">
+                    <!-- Divisions will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Partnerships Section -->
+            <section id="partnerships" class="content-section">
+                <h2>Work With Us Management</h2>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openPartnershipModal()">Add New Partnership Type</button>
+                </div>
+                <div class="partnerships-grid" id="partnershipsGrid">
+                    <!-- Partnerships will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Members Section -->
+            <section id="members" class="content-section">
+                <h2>Members Management</h2>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openMemberModal()">Add New Member</button>
+                    <button class="btn-secondary" onclick="exportMembers()">Export Members</button>
+                </div>
+                <div class="search-container">
+                    <input type="text" id="memberSearch" placeholder="Search members...">
+                </div>
+                <div class="table-container">
+                    <table id="membersTable">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Division</th>
+                                <th>Status</th>
+                                <th>Registration Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Members will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Website Generator Section -->
+            <section id="website" class="content-section">
+                <h2>Website Generator</h2>
+                <div class="generator-container">
+                    <div class="form-group">
+                        <label for="websiteTitle">Website Title:</label>
+                        <input type="text" id="websiteTitle" value="JK Winners Investment - JKWI">
+                    </div>
+                    <div class="form-group">
+                        <label for="includeDirectors">Include Directors Section:</label>
+                        <input type="checkbox" id="includeDirectors" checked>
+                    </div>
+                    <div class="form-group">
+                        <label for="includeDivisions">Include Divisions Section:</label>
+                        <input type="checkbox" id="includeDivisions" checked>
+                    </div>
+                    <div class="form-group">
+                        <label for="includePartnerships">Include Work With Us Section:</label>
+                        <input type="checkbox" id="includePartnerships" checked>
+                    </div>
+                    <div class="form-group">
+                        <label for="includeMembers">Include Members Section:</label>
+                        <input type="checkbox" id="includeMembers" checked>
+                    </div>
+                    <button class="btn-primary" onclick="generateWebsite()">Generate Website</button>
+                    <button class="btn-secondary" onclick="previewWebsite()">Preview</button>
+                </div>
+                <div class="preview-container" id="websitePreview">
+                    <!-- Website preview will be shown here -->
+                </div>
+            </section>
+
+            <!-- Backup Section -->
+            <section id="backup" class="content-section">
+                <h2>Backup & Export</h2>
+                <div class="backup-container">
+                    <div class="backup-actions">
+                        <button class="btn-primary" onclick="createBackup()">Create Backup</button>
+                        <button class="btn-secondary" onclick="exportData()">Export All Data</button>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                        <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Import Data</button>
+                    </div>
+                    <div class="backup-list" id="backupList">
+                        <h3>Available Backups</h3>
+                        <!-- Backup list will be populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="directorModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add/Edit Director</h2>
+            <form id="directorForm">
+                <input type="hidden" id="directorId">
+                <div class="form-group">
+                    <label for="directorName">Name:</label>
+                    <input type="text" id="directorName" required>
+                </div>
+                <div class="form-group">
+                    <label for="directorPosition">Position:</label>
+                    <select id="directorPosition" required>
+                        <option value="">Select Position</option>
+                        <option value="President">President</option>
+                        <option value="Board Member">Board Member</option>
+                        <option value="Division Director">Division Director</option>
+                        <option value="Agent">Agent</option>
+                        <option value="Director Organization">Director Organization</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="directorDivision">Division:</label>
+                    <select id="directorDivision">
+                        <option value="">Select Division</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="directorEmail">Email:</label>
+                    <input type="email" id="directorEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="directorPhone">Phone:</label>
+                    <input type="tel" id="directorPhone">
+                </div>
+                <button type="submit">Save Director</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="divisionModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add/Edit Division</h2>
+            <form id="divisionForm">
+                <input type="hidden" id="divisionId">
+                <div class="form-group">
+                    <label for="divisionName">Division Name:</label>
+                    <input type="text" id="divisionName" required>
+                </div>
+                <div class="form-group">
+                    <label for="divisionDescription">Description:</label>
+                    <textarea id="divisionDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="divisionHead">Division Head:</label>
+                    <input type="text" id="divisionHead">
+                </div>
+                <button type="submit">Save Division</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="memberModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add/Edit Member</h2>
+            <form id="memberForm">
+                <input type="hidden" id="memberId">
+                <div class="form-group">
+                    <label for="memberUsername">Username:</label>
+                    <input type="text" id="memberUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberFullName">Full Name:</label>
+                    <input type="text" id="memberFullName" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberEmail">Email:</label>
+                    <input type="email" id="memberEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="memberDivision">Division:</label>
+                    <select id="memberDivision">
+                        <option value="">Select Division</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="memberStatus">Status:</label>
+                    <select id="memberStatus" required>
+                        <option value="Active">Active</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit">Save Member</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

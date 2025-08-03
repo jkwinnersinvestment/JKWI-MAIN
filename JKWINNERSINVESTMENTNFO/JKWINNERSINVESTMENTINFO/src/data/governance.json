@@ -1,0 +1,26 @@
+{
+    "governance": {
+        "structure": [
+            {
+                "role": "President",
+                "description": "Leads the company's strategic vision and operations."
+            },
+            {
+                "role": "Board Members",
+                "description": "Provide oversight and strategic guidance to the organization."
+            },
+            {
+                "role": "Division Directors",
+                "description": "Heads of each specialized division ensuring operational excellence."
+            },
+            {
+                "role": "Agents",
+                "description": "Field representatives facilitating business operations and client relations."
+            },
+            {
+                "role": "Director's Organizations",
+                "description": "Specialized organizational units supporting directorial functions."
+            }
+        ]
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "divisions": [
+        {
+            "name": "Mining Division",
+            "description": "Mineral extraction and resource development"
+        },
+        {
+            "name": "Infrastructure Division",
+            "description": "Construction and development projects"
+        },
+        {
+            "name": "Farming Division",
+            "description": "Agricultural and agribusiness ventures"
+        },
+        {
+            "name": "Service Division",
+            "description": "Professional and consulting services"
+        },
+        {
+            "name": "Finance Division",
+            "description": "Financial services and investment management"
+        },
+        {
+            "name": "Legal Division",
+            "description": "Legal advisory and compliance services"
+        },
+        {
+            "name": "Media Division",
+            "description": "Communications and media services"
+        },
+        {
+            "name": "Social Division",
+            "description": "Community engagement and social impact"
+        }
+    ]
+}
