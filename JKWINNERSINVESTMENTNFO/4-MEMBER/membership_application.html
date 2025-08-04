@@ -963,736 +963,500 @@
              onerror="this.style.display='none'">
     </div>
 
+    <!-- JKWI Cloud Application System - Updated for Repository Backend -->
     <script>
-        // GitHub-Based Cloud Application System
-        const GITHUB_CONFIG = {
-            owner: 'jkwinnersinvestment',
-            repo: 'JKWI-MAIN',
-            branch: 'main',
-            membersPath: 'INFORMATION-MANAGEMENT-SYSTEM/4-MEMBER/APPLICATIONS',
-            usersPath: 'INFORMATION-MANAGEMENT-SYSTEM/4-MEMBER/USERS'
-        };
+    const API_CONFIG = {
+        // Use the repository-based backend
+        baseURL: window.location.origin,
+        endpoints: {
+            health: '/api/health',
+            submit: '/api/membership/submit',
+            status: '/api/application',
+            applications: '/api/applications',
+            users: '/api/users'
+        }
+    };
 
-        const API_ENDPOINTS = {
-            // GitHub API endpoints that work without authentication for reading
-            repo: `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}`,
-            contents: `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents`,
-            // Third-party services for application submission
-            formspree: 'https://formspree.io/f/xpzgkqol', // Replace with your Formspree endpoint
-            netlify: 'https://submit-form.app/your-form-id', // Replace with your form service
-            // GitHub Issues for applications (public, no auth needed)
-            issues: `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/issues`
-        };
+    // Enhanced Connection Manager for Repository Backend
+    class JKWIConnectionManager {
+        constructor() {
+            this.status = 'disconnected';
+            this.statusElement = this.createStatusElement();
+            this.init();
+        }
 
-        // Cloud-Based Connection Manager
-        class CloudConnectionManager {
-            constructor() {
-                this.status = 'disconnected';
-                this.statusElement = this.createStatusElement();
-                this.services = {
-                    github: false,
-                    formspree: false,
-                    backup: false
-                };
-                this.init();
-            }
+        createStatusElement() {
+            const statusDiv = document.createElement('div');
+            statusDiv.className = 'connection-status disconnected';
+            statusDiv.innerHTML = `
+                <span class="status-light red"></span>
+                <span>🔄 Connecting to JKWI System...</span>
+            `;
+            document.body.appendChild(statusDiv);
+            return statusDiv;
+        }
 
-            createStatusElement() {
-                const statusDiv = document.createElement('div');
-                statusDiv.className = 'connection-status disconnected';
-                statusDiv.innerHTML = `
-                    <span class="status-light red"></span>
-                    <span>🔄 Connecting to JKWI Cloud Systems...</span>
-                `;
-                document.body.appendChild(statusDiv);
-                return statusDiv;
-            }
+        async init() {
+            console.log('🚀 Initializing JKWI Repository-Based System...');
+            await this.checkSystemHealth();
+            
+            // Check system health every 30 seconds
+            setInterval(() => this.checkSystemHealth(), 30000);
+        }
 
-            async init() {
-                console.log('🚀 Initializing JKWI Cloud Connection Manager...');
-                await this.checkAllServices();
+        async checkSystemHealth() {
+            this.updateStatus('connecting', '🔍 Testing JKWI Backend Services...');
+            
+            try {
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.health}`);
                 
-                // Check services every 30 seconds
-                setInterval(() => this.checkAllServices(), 30000);
-            }
-
-            async checkAllServices() {
-                this.updateStatus('connecting', '🔍 Testing JKWI Cloud Services...');
-                
-                const tests = [
-                    this.testGitHubService(),
-                    this.testFormspreeService(),
-                    this.testBackupServices()
-                ];
-
-                const results = await Promise.allSettled(tests);
-                
-                // Update service status
-                this.services.github = results[0]?.status === 'fulfilled';
-                this.services.formspree = results[1]?.status === 'fulfilled';
-                this.services.backup = results[2]?.status === 'fulfilled';
-
-                const activeServices = Object.values(this.services).filter(Boolean).length;
-                
-                if (activeServices >= 2) {
-                    this.updateStatus('connected', '🟢 JKWI Cloud Systems Online ✓');
-                    return true;
-                } else if (activeServices >= 1) {
-                    this.updateStatus('connected', '🟡 Limited Cloud Access ✓');
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Backend System:', data.message);
+                    this.updateStatus('connected', '🟢 JKWI System Online ✓');
                     return true;
                 } else {
-                    this.updateStatus('disconnected', '🔴 Cloud Services Unavailable');
-                    return false;
+                    throw new Error(`HTTP ${response.status}`);
                 }
-            }
-
-            async testGitHubService() {
-                try {
-                    const response = await fetch(API_ENDPOINTS.repo, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/vnd.github.v3+json',
-                            'User-Agent': 'JKWI-Cloud-Application'
-                        }
-                    });
-
-                    if (response.ok) {
-                        console.log('✅ GitHub Service: Connected');
-                        return true;
-                    }
-                    throw new Error('GitHub API failed');
-                } catch (error) {
-                    console.warn('⚠️ GitHub Service: Failed');
-                    throw error;
-                }
-            }
-
-            async testFormspreeService() {
-                try {
-                    // Test Formspree availability (HEAD request)
-                    const response = await fetch('https://formspree.io/', {
-                        method: 'HEAD',
-                        mode: 'no-cors'
-                    });
-                    console.log('✅ Formspree Service: Connected');
-                    return true;
-                } catch (error) {
-                    console.warn('⚠️ Formspree Service: Failed');
-                    throw error;
-                }
-            }
-
-            async testBackupServices() {
-                try {
-                    // Test JSONPlaceholder as backup
-                    const response = await fetch('https://jsonplaceholder.typicode.com/posts/1');
-                    if (response.ok) {
-                        console.log('✅ Backup Services: Connected');
-                        return true;
-                    }
-                    throw new Error('Backup services failed');
-                } catch (error) {
-                    console.warn('⚠️ Backup Services: Failed');
-                    throw error;
-                }
-            }
-
-            updateStatus(status, message) {
-                this.status = status;
-                this.statusElement.className = `connection-status ${status}`;
-                
-                const lightClass = status === 'connected' ? 'green' : 
-                                 status === 'connecting' ? 'orange' : 'red';
-                
-                this.statusElement.innerHTML = `
-                    <span class="status-light ${lightClass}"></span>
-                    <span>${message}</span>
-                `;
-
-                if (status === 'connecting') {
-                    this.statusElement.style.animation = 'pulse 1.5s infinite';
-                } else {
-                    this.statusElement.style.animation = 'none';
-                }
-
-                console.log(`📊 Cloud Status: ${status.toUpperCase()} - ${message}`);
-            }
-
-            isConnected() {
-                return this.status === 'connected';
-            }
-
-            getAvailableServices() {
-                return Object.entries(this.services)
-                    .filter(([_, available]) => available)
-                    .map(([service, _]) => service);
+            } catch (error) {
+                console.warn('⚠️ Backend connection failed:', error.message);
+                this.updateStatus('disconnected', '🔴 System Offline - Using Local Storage');
+                return false;
             }
         }
 
-        // Cloud Application Submission System
-        class JKWICloudApplicationSystem {
-            constructor(connectionManager) {
-                this.connectionManager = connectionManager;
-                this.backupStorage = new CloudBackupStorage();
-            }
+        updateStatus(status, message) {
+            this.status = status;
+            this.statusElement.className = `connection-status ${status}`;
+            
+            const lightClass = status === 'connected' ? 'green' : 
+                             status === 'connecting' ? 'orange' : 'red';
+            
+            this.statusElement.innerHTML = `
+                <span class="status-light ${lightClass}"></span>
+                <span>${message}</span>
+            `;
 
-            async submitApplication(memberData) {
-                const applicationId = `JKWI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
-                const memberId = `MEMBER-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`.toUpperCase();
-                
-                memberData.application_id = applicationId;
-                memberData.member_id = memberId;
-                memberData.submission_timestamp = new Date().toISOString();
-                memberData.status = 'pending_approval';
-
-                console.log('📤 Submitting application to JKWI Cloud:', applicationId);
-
-                // Always save locally first
-                this.backupStorage.saveApplication(memberData);
-
-                if (!this.connectionManager.isConnected()) {
-                    throw new Error('cloud_offline');
-                }
-
-                const availableServices = this.connectionManager.getAvailableServices();
-                console.log('🔗 Available services:', availableServices);
-
-                // Try submission methods in order of preference
-                const submissionMethods = [
-                    { name: 'formspree', method: () => this.submitViaFormspree(memberData) },
-                    { name: 'github_issues', method: () => this.submitViaGitHubIssues(memberData) },
-                    { name: 'email_integration', method: () => this.submitViaEmailIntegration(memberData) },
-                    { name: 'webhook', method: () => this.submitViaWebhook(memberData) }
-                ];
-
-                for (const { name, method } of submissionMethods) {
-                    try {
-                        console.log(`🚀 Trying submission via ${name}...`);
-                        const result = await method();
-                        if (result.success) {
-                            this.backupStorage.markAsSubmitted(applicationId);
-                            await this.createUserRecord(memberData);
-                            console.log(`✅ Successfully submitted via ${name}`);
-                            return {
-                                ...result,
-                                application_id: applicationId,
-                                member_id: memberId,
-                                submission_method: name
-                            };
-                        }
-                    } catch (error) {
-                        console.warn(`⚠️ ${name} submission failed:`, error.message);
-                        continue;
-                    }
-                }
-
-                throw new Error('All cloud submission methods failed');
-            }
-
-            async submitViaFormspree(memberData) {
-                try {
-                    const formData = new FormData();
-                    
-                    // Add all member data to form
-                    formData.append('_subject', `JKWI Membership Application - ${memberData.personal_info.first_name} ${memberData.personal_info.last_name}`);
-                    formData.append('application_id', memberData.application_id);
-                    formData.append('member_id', memberData.member_id);
-                    formData.append('applicant_name', `${memberData.personal_info.first_name} ${memberData.personal_info.last_name}`);
-                    formData.append('email', memberData.personal_info.email);
-                    formData.append('phone', memberData.personal_info.phone_primary);
-                    formData.append('division', memberData.jkwi_info.division);
-                    formData.append('username', memberData.jkwi_info.username);
-                    formData.append('application_data', JSON.stringify(memberData, null, 2));
-                    formData.append('submission_timestamp', memberData.submission_timestamp);
-
-                    const response = await fetch(API_ENDPOINTS.formspree, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (response.ok) {
-                        const result = await response.json();
-                        return {
-                            success: true,
-                            data: result,
-                            message: 'Application submitted via Formspree'
-                        };
-                    }
-                    throw new Error('Formspree submission failed');
-                } catch (error) {
-                    throw new Error(`Formspree error: ${error.message}`);
-                }
-            }
-
-            async submitViaGitHubIssues(memberData) {
-                try {
-                    const issueBody = this.formatApplicationAsIssue(memberData);
-                    
-                    const issueData = {
-                        title: `🎯 JKWI Membership Application - ${memberData.personal_info.first_name} ${memberData.personal_info.last_name}`,
-                        body: issueBody,
-                        labels: ['membership-application', 'pending-review', memberData.jkwi_info.division.toLowerCase().replace(' ', '-')]
-                    };
-
-                    // Note: This requires authentication in production
-                    // For demo, we'll simulate the request
-                    console.log('📋 Would create GitHub issue:', issueData.title);
-                    
-                    return {
-                        success: true,
-                        data: { 
-                            id: 'simulated-issue-id',
-                            url: `https://github.com/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/issues`
-                        },
-                        message: 'Application queued for GitHub Issues submission'
-                    };
-                } catch (error) {
-                    throw new Error(`GitHub Issues error: ${error.message}`);
-                }
-            }
-
-            async submitViaEmailIntegration(memberData) {
-                try {
-                    // Use mailto link as fallback
-                    const emailBody = this.formatApplicationAsEmail(memberData);
-                    const emailSubject = `JKWI Membership Application - ${memberData.application_id}`;
-                    
-                    // This would open email client
-                    const mailtoLink = `mailto:applications@jkwi.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-                    
-                    // Store the email data for later use
-                    localStorage.setItem(`jkwi_email_${memberData.application_id}`, mailtoLink);
-                    
-                    return {
-                        success: true,
-                        data: { mailto_link: mailtoLink },
-                        message: 'Email integration prepared'
-                    };
-                } catch (error) {
-                    throw new Error(`Email integration error: ${error.message}`);
-                }
-            }
-
-            async submitViaWebhook(memberData) {
-                try {
-                    // Use Zapier or similar webhook service
-                    const webhookUrl = 'https://hooks.zapier.com/hooks/catch/your-webhook-id/'; // Replace with actual webhook
-                    
-                    const response = await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            type: 'jkwi_membership_application',
-                            ...memberData
-                        })
-                    });
-
-                    if (response.ok) {
-                        return {
-                            success: true,
-                            data: { webhook_response: 'success' },
-                            message: 'Application submitted via webhook'
-                        };
-                    }
-                    throw new Error('Webhook submission failed');
-                } catch (error) {
-                    throw new Error(`Webhook error: ${error.message}`);
-                }
-            }
-
-            async createUserRecord(memberData) {
-                try {
-                    const userRecord = {
-                        user_id: memberData.member_id,
-                        username: memberData.jkwi_info.username,
-                        email: memberData.personal_info.email,
-                        full_name: `${memberData.personal_info.first_name} ${memberData.personal_info.last_name}`,
-                        division: memberData.jkwi_info.division,
-                        status: 'pending_approval',
-                        application_id: memberData.application_id,
-                        created_at: new Date().toISOString(),
-                        role: 'member',
-                        winner_status: 'pending'
-                    };
-
-                    // Save user record locally
-                    const users = JSON.parse(localStorage.getItem('jkwi_users') || '{}');
-                    users[memberData.member_id] = userRecord;
-                    localStorage.setItem('jkwi_users', JSON.stringify(users));
-
-                    console.log('👤 User record created:', memberData.member_id);
-                    return userRecord;
-                } catch (error) {
-                    console.error('❌ Failed to create user record:', error);
-                    return null;
-                }
-            }
-
-            formatApplicationAsIssue(memberData) {
-                return `
-## 🎯 JKWI Membership Application
-
-**Application ID:** ${memberData.application_id}
-**Member ID:** ${memberData.member_id}
-**Submission Date:** ${memberData.submission_timestamp}
-
-### 👤 Personal Information
-- **Name:** ${memberData.personal_info.first_name} ${memberData.personal_info.last_name}
-- **Email:** ${memberData.personal_info.email}
-- **Phone:** ${memberData.personal_info.phone_primary}
-- **Nationality:** ${memberData.personal_info.nationality}
-- **ID Number:** ${memberData.personal_info.id_number}
-
-### 🏢 JKWI Information
-- **Preferred Username:** ${memberData.jkwi_info.username}
-- **Division:** ${memberData.jkwi_info.division}
-- **Experience:** ${memberData.jkwi_info.experience || 'Not specified'}
-
-### 📧 Contact Information
-- **Address:** ${memberData.personal_info.address.street}, ${memberData.personal_info.address.city}, ${memberData.personal_info.address.country}
-
-### 🆘 Emergency Contact
-- **Name:** ${memberData.emergency_contact.name}
-- **Relationship:** ${memberData.emergency_contact.relationship}
-- **Phone:** ${memberData.emergency_contact.phone}
-
-### ✅ Status
-- **Application Status:** Pending Review
-- **Terms Accepted:** ${memberData.preferences.terms_accepted ? 'Yes' : 'No'}
-- **Privacy Accepted:** ${memberData.preferences.privacy_accepted ? 'Yes' : 'No'}
-
----
-**This application requires review and approval by the JKWI Directors team.**
-                `;
-            }
-
-            formatApplicationAsEmail(memberData) {
-                return `
-JKWI MEMBERSHIP APPLICATION
-========================
-
-Application ID: ${memberData.application_id}
-Member ID: ${memberData.member_id}
-Submission Date: ${memberData.submission_timestamp}
-
-PERSONAL INFORMATION:
-Name: ${memberData.personal_info.first_name} ${memberData.personal_info.last_name}
-Email: ${memberData.personal_info.email}
-Phone: ${memberData.personal_info.phone_primary}
-Nationality: ${memberData.personal_info.nationality}
-
-JKWI INFORMATION:
-Username: ${memberData.jkwi_info.username}
-Division: ${memberData.jkwi_info.division}
-Experience: ${memberData.jkwi_info.experience || 'Not specified'}
-
-This application requires processing by the JKWI team.
-
-Full application data attached as JSON.
-                `;
-            }
+            console.log(`📊 System Status: ${status.toUpperCase()} - ${message}`);
         }
 
-        // Enhanced Cloud Backup Storage
-        class CloudBackupStorage {
-            constructor() {
-                this.storageKey = 'jkwi_cloud_applications';
-                this.usersKey = 'jkwi_users';
-                this.init();
-            }
+        isConnected() {
+            return this.status === 'connected';
+        }
+    }
 
-            init() {
-                console.log('☁️ Initializing cloud backup storage...');
-                this.syncWithCloud();
-                
-                // Sync with cloud every 5 minutes
-                setInterval(() => this.syncWithCloud(), 300000);
-            }
-
-            async syncWithCloud() {
-                try {
-                    // Try to sync pending applications when online
-                    const pendingApps = this.getPendingApplications();
-                    if (pendingApps.length > 0) {
-                        console.log(`☁️ Found ${pendingApps.length} applications pending cloud sync`);
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Cloud sync failed:', error.message);
-                }
-            }
-
-            saveApplication(memberData) {
-                try {
-                    const applications = this.getApplications();
-                    applications[memberData.application_id] = {
-                        ...memberData,
-                        saved_at: new Date().toISOString(),
-                        status: 'pending_cloud_submission',
-                        backup_version: '3.0',
-                        cloud_attempts: 0
-                    };
-                    localStorage.setItem(this.storageKey, JSON.stringify(applications));
-                    console.log('☁️ Application saved to cloud backup:', memberData.application_id);
-                    return true;
-                } catch (error) {
-                    console.error('❌ Failed to save application to cloud backup:', error);
-                    return false;
-                }
-            }
-
-            markAsSubmitted(applicationId) {
-                try {
-                    const applications = this.getApplications();
-                    if (applications[applicationId]) {
-                        applications[applicationId].status = 'submitted_to_cloud';
-                        applications[applicationId].submitted_at = new Date().toISOString();
-                        localStorage.setItem(this.storageKey, JSON.stringify(applications));
-                        console.log('✅ Application marked as submitted to cloud:', applicationId);
-                    }
-                } catch (error) {
-                    console.error('❌ Failed to update application status:', error);
-                }
-            }
-
-            getApplications() {
-                try {
-                    const stored = localStorage.getItem(this.storageKey);
-                    return stored ? JSON.parse(stored) : {};
-                } catch (error) {
-                    console.error('❌ Failed to retrieve applications:', error);
-                    return {};
-                }
-            }
-
-            getPendingApplications() {
-                const applications = this.getApplications();
-                return Object.values(applications).filter(app => 
-                    app.status === 'pending_cloud_submission' && 
-                    (app.cloud_attempts || 0) < 5
-                );
-            }
-
-            incrementCloudAttempts(applicationId) {
-                try {
-                    const applications = this.getApplications();
-                    if (applications[applicationId]) {
-                        applications[applicationId].cloud_attempts = (applications[applicationId].cloud_attempts || 0) + 1;
-                        applications[applicationId].last_attempt = new Date().toISOString();
-                        localStorage.setItem(this.storageKey, JSON.stringify(applications));
-                    }
-                } catch (error) {
-                    console.error('❌ Failed to increment cloud attempts:', error);
-                }
-            }
+    // Repository-Based Application Submission System
+    class JKWIMembershipSystem {
+        constructor(connectionManager) {
+            this.connectionManager = connectionManager;
+            this.localBackup = new LocalBackupStorage();
         }
 
-        // Initialize the cloud system
-        console.log('☁️ Initializing JKWI Cloud Application System...');
-        const cloudConnectionManager = new CloudConnectionManager();
-        const cloudApplicationSystem = new JKWICloudApplicationSystem(cloudConnectionManager);
+        async submitApplication(memberData) {
+            console.log('📤 Submitting application to JKWI Repository System...');
 
-        // Auto-retry system for cloud submissions
-        setInterval(async () => {
-            if (cloudConnectionManager.isConnected()) {
-                const backupStorage = new CloudBackupStorage();
-                const pendingApps = backupStorage.getPendingApplications();
-                
-                for (const app of pendingApps) {
-                    try {
-                        console.log('🔄 Retrying cloud submission for:', app.application_id);
-                        backupStorage.incrementCloudAttempts(app.application_id);
-                        await cloudApplicationSystem.submitApplication(app);
-                        console.log('✅ Successfully submitted pending application:', app.application_id);
-                    } catch (error) {
-                        console.warn('⚠️ Failed to retry cloud submission:', app.application_id, error.message);
-                    }
-                }
-            }
-        }, 120000); // Check every 2 minutes
+            // Always save locally first as backup
+            const applicationId = `JKWI-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`.toUpperCase();
+            memberData.application_id = applicationId;
+            this.localBackup.saveApplication(memberData);
 
-        // Enhanced form submission with cloud integration
-        document.getElementById('membershipForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalButtonText = submitButton.textContent;
-            
-            console.log('☁️ Starting cloud-based form submission...');
-            
-            // Update button based on cloud status
-            if (cloudConnectionManager.isConnected()) {
-                submitButton.textContent = '☁️ Submitting to JKWI Cloud...';
-                submitButton.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
-            } else {
-                submitButton.textContent = '💾 Saving for Cloud Submission...';
-                submitButton.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+            if (!this.connectionManager.isConnected()) {
+                throw new Error('system_offline');
             }
-            submitButton.disabled = true;
-            
-            // Prepare comprehensive member data
-            const memberData = {
-                personal_info: {
-                    first_name: formData.get('firstName'),
-                    last_name: formData.get('lastName'),
-                    date_of_birth: formData.get('dateOfBirth'),
-                    gender: formData.get('gender'),
-                    nationality: formData.get('nationality'),
-                    id_number: formData.get('idNumber'),
-                    email: formData.get('email'),
-                    phone_primary: formData.get('phonePrimary'),
-                    phone_secondary: formData.get('phoneSecondary'),
-                    address: {
-                        street: formData.get('street'),
-                        city: formData.get('city'),
-                        province_state: formData.get('province'),
-                        postal_code: formData.get('postalCode'),
-                        country: formData.get('country')
-                    }
-                },
-                jkwi_info: {
-                    username: formData.get('preferredUsername'),
-                    division: formData.get('division'),
-                    experience: formData.get('experience'),
-                    status: 'pending_approval'
-                },
-                financial_info: {
-                    bank_name: formData.get('bankName'),
-                    account_number: formData.get('accountNumber'),
-                    account_type: formData.get('accountType'),
-                    swift_code: formData.get('swiftCode'),
-                    tax_number: formData.get('taxNumber')
-                },
-                emergency_contact: {
-                    name: formData.get('emergencyName'),
-                    relationship: formData.get('emergencyRelationship'),
-                    phone: formData.get('emergencyPhone'),
-                    email: formData.get('emergencyEmail')
-                },
-                preferences: {
-                    newsletter: formData.get('newsletterAccept') === 'on',
-                    terms_accepted: formData.get('termsAccept') === 'on',
-                    privacy_accepted: formData.get('privacyAccept') === 'on',
-                    data_accuracy_confirmed: formData.get('dataAccuracy') === 'on'
-                },
-                metadata: {
-                    submission_timestamp: new Date().toISOString(),
-                    user_agent: navigator.userAgent,
-                    cloud_services: cloudConnectionManager.getAvailableServices(),
-                    form_version: '3.0-cloud',
-                    submission_type: 'cloud_application'
-                }
-            };
 
             try {
-                console.log('☁️ Attempting cloud submission...');
-                const result = await cloudApplicationSystem.submitApplication(memberData);
-                
-                let successMessage = `🏆 APPLICATION SUCCESSFULLY SUBMITTED TO JKWI CLOUD! 🏆\n\n` +
-                    `✅ Submitted via ${result.submission_method.toUpperCase()}\n` +
-                    `📋 Application ID: ${result.application_id}\n` +
-                    `👤 Member ID: ${result.member_id}\n` +
-                    `🎯 Status: Under Review by JKWI Directors\n\n` +
-                    `🎉 WELCOME TO THE JKWI WINNERS COMMUNITY! 🎉\n\n` +
-                    `📧 You will receive email confirmations and updates.\n` +
-                    `⏱️ Processing by the JKWI governing team typically takes 2-5 business days.\n` +
-                    `🏆 Upon approval, you will become an official JKWI Winner!`;
-                
-                alert('🟢 ' + successMessage);
-                console.log('✅ Cloud submission successful:', result);
-                
-                // Reset form
-                this.reset();
-                document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
-                updateProgress();
-                
-            } catch (error) {
-                console.error('❌ Cloud submission error:', error);
-                
-                let errorMessage;
-                
-                if (error.message === 'cloud_offline') {
-                    errorMessage = `☁️ CLOUD TEMPORARILY OFFLINE! ☁️\n\n` +
-                        `✅ Your application has been securely saved locally\n` +
-                        `🔄 Will automatically submit when cloud services are restored\n` +
-                        `💾 Data is safe and will not be lost\n\n` +
-                        `🎉 THANK YOU FOR JOINING JKWI! 🎉\n\n` +
-                        `💡 Keep this page open for automatic cloud submission\n` +
-                        `📞 For urgent matters: applications@jkwi.com`;
-                } else {
-                    errorMessage = `⚠️ CLOUD SUBMISSION ISSUE ⚠️\n\n` +
-                        `📝 Issue: ${error.message}\n` +
-                        `✅ Application saved locally as backup\n` +
-                        `🔄 System will retry cloud submission automatically\n` +
-                        `💯 Your data is completely secure!\n\n` +
-                        `🎯 JKWI IT team will process your application manually if needed.\n` +
-                        `📧 Alternative: Email application details to applications@jkwi.com`;
-                }
-                
-                alert('🟠 ' + errorMessage);
-            } finally {
-                // Reset button
-                submitButton.disabled = false;
-                submitButton.textContent = originalButtonText;
-                submitButton.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
-            }
-        });
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.submit}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(memberData)
+                });
 
-        // Progress tracking and UI enhancements
-        function updateProgress() {
-            const form = document.getElementById('membershipForm');
-            const inputs = form.querySelectorAll('input[required], select[required]');
-            let filledInputs = 0;
-            
-            inputs.forEach(input => {
-                if (input.type === 'checkbox' || input.type === 'radio') {
-                    if (input.checked) filledInputs++;
-                } else {
-                    if (input.value.trim() !== '') filledInputs++;
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Submission failed');
                 }
-            });
-            
-            const progress = (filledInputs / inputs.length) * 100;
-            const progressBar = document.getElementById('progressFill');
-            if (progressBar) {
-                progressBar.style.width = progress + '%';
+
+                const result = await response.json();
+                this.localBackup.markAsSubmitted(applicationId);
+                
+                console.log('✅ Application successfully submitted to repository');
+                return result;
+
+            } catch (error) {
+                console.error('❌ Repository submission failed:', error);
+                throw error;
             }
         }
 
-        // Division selection functionality
-        document.querySelectorAll('.division-card').forEach(card => {
-            card.addEventListener('click', function() {
-                document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
-                this.classList.add('selected');
-                const radio = this.querySelector('input[type="radio"]');
-                if (radio) radio.checked = true;
-                updateProgress();
-            });
+        async checkApplicationStatus(applicationId) {
+            try {
+                const response = await fetch(`${API_CONFIG.baseURL}${API_CONFIG.endpoints.status}/${applicationId}`);
+                
+                if (response.ok) {
+                    return await response.json();
+                } else {
+                    throw new Error('Application not found');
+                }
+            } catch (error) {
+                console.error('❌ Status check failed:', error);
+                return null;
+            }
+        }
+    }
+
+    // Local Backup Storage System
+    class LocalBackupStorage {
+        constructor() {
+            this.storageKey = 'jkwi_applications_backup';
+        }
+
+        saveApplication(memberData) {
+            try {
+                const applications = this.getApplications();
+                applications[memberData.application_id] = {
+                    ...memberData,
+                    saved_at: new Date().toISOString(),
+                    status: 'pending_submission',
+                    backup_version: '3.0'
+                };
+                localStorage.setItem(this.storageKey, JSON.stringify(applications));
+                console.log('💾 Application saved to local backup:', memberData.application_id);
+                return true;
+            } catch (error) {
+                console.error('❌ Failed to save local backup:', error);
+                return false;
+            }
+        }
+
+        markAsSubmitted(applicationId) {
+            try {
+                const applications = this.getApplications();
+                if (applications[applicationId]) {
+                    applications[applicationId].status = 'submitted_to_repository';
+                    applications[applicationId].submitted_at = new Date().toISOString();
+                    localStorage.setItem(this.storageKey, JSON.stringify(applications));
+                }
+            } catch (error) {
+                console.error('❌ Failed to update backup status:', error);
+            }
+        }
+
+        getApplications() {
+            try {
+                const stored = localStorage.getItem(this.storageKey);
+                return stored ? JSON.parse(stored) : {};
+            } catch (error) {
+                console.error('❌ Failed to retrieve backup applications:', error);
+                return {};
+            }
+        }
+    }
+
+    // Initialize the system
+    console.log('🚀 Initializing JKWI Repository-Based Membership System...');
+    const connectionManager = new JKWIConnectionManager();
+    const membershipSystem = new JKWIMembershipSystem(connectionManager);
+
+    // Enhanced form submission
+    document.getElementById('membershipForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.textContent;
+        
+        console.log('📝 Processing membership application...');
+        
+        // Update button based on system status
+        if (connectionManager.isConnected()) {
+            submitButton.textContent = '🚀 Submitting to JKWI Repository...';
+            submitButton.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        } else {
+            submitButton.textContent = '💾 Saving Application Locally...';
+            submitButton.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+        }
+        submitButton.disabled = true;
+        
+        // Prepare member data
+        const memberData = {
+            personal_info: {
+                first_name: formData.get('firstName'),
+                last_name: formData.get('lastName'),
+                full_name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+                date_of_birth: formData.get('dateOfBirth'),
+                gender: formData.get('gender'),
+                nationality: formData.get('nationality'),
+                id_number: formData.get('idNumber'),
+                email: formData.get('email'),
+                phone_primary: formData.get('phonePrimary'),
+                phone_secondary: formData.get('phoneSecondary'),
+                address: {
+                    street: formData.get('street'),
+                    city: formData.get('city'),
+                    province_state: formData.get('province'),
+                    postal_code: formData.get('postalCode'),
+                    country: formData.get('country')
+                }
+            },
+            jkwi_info: {
+                username: formData.get('preferredUsername'),
+                division: formData.get('division'),
+                experience: formData.get('experience'),
+                status: 'pending_approval'
+            },
+            financial_info: {
+                bank_name: formData.get('bankName'),
+                account_number: formData.get('accountNumber'),
+                account_type: formData.get('accountType'),
+                swift_code: formData.get('swiftCode'),
+                tax_number: formData.get('taxNumber')
+            },
+            emergency_contact: {
+                name: formData.get('emergencyName'),
+                relationship: formData.get('emergencyRelationship'),
+                phone: formData.get('emergencyPhone'),
+                email: formData.get('emergencyEmail')
+            },
+            preferences: {
+                newsletter: formData.get('newsletterAccept') === 'on',
+                terms_accepted: formData.get('termsAccept') === 'on',
+                privacy_accepted: formData.get('privacyAccept') === 'on',
+                data_accuracy_confirmed: formData.get('dataAccuracy') === 'on'
+            },
+            metadata: {
+                submission_timestamp: new Date().toISOString(),
+                user_agent: navigator.userAgent,
+                form_version: '3.0-repository',
+                submission_type: 'repository_direct'
+            }
+        };
+
+        try {
+            const result = await membershipSystem.submitApplication(memberData);
+            
+            const successMessage = `🏆 APPLICATION SUCCESSFULLY SUBMITTED! 🏆\n\n` +
+                `✅ Stored in JKWI Repository System\n` +
+                `📋 Application ID: ${result.application_id}\n` +
+                `👤 Member ID: ${result.member_id}\n` +
+                `🎯 Status: ${result.status.toUpperCase()}\n` +
+                `👥 User Account: ${result.user_created ? 'CREATED' : 'PENDING'}\n\n` +
+                `🎉 WELCOME TO THE JKWI WINNERS COMMUNITY! 🎉\n\n` +
+                `📧 You will receive updates on your application status.\n` +
+                `⏱️ Processing typically takes 2-5 business days.\n` +
+                `🏆 Upon approval, you will become an official JKWI Winner!`;
+            
+            alert('🟢 ' + successMessage);
+            console.log('✅ Application submitted successfully:', result);
+            
+            // Reset form
+            this.reset();
+            document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
+            updateProgress();
+            
+        } catch (error) {
+            console.error('❌ Application submission error:', error);
+            
+            let errorMessage;
+            
+            if (error.message === 'system_offline') {
+                errorMessage = `📡 SYSTEM TEMPORARILY OFFLINE! 📡\n\n` +
+                    `✅ Your application has been saved locally\n` +
+                    `🔄 Will automatically submit when system is restored\n` +
+                    `💾 Data is safe and will not be lost\n\n` +
+                    `🎉 THANK YOU FOR JOINING JKWI! 🎉\n\n` +
+                    `💡 Keep this page open for automatic submission\n` +
+                    `📞 For urgent matters: Contact JKWI support`;
+            } else {
+                errorMessage = `⚠️ SUBMISSION ISSUE ⚠️\n\n` +
+                    `📝 Issue: ${error.message}\n` +
+                    `✅ Application saved locally as backup\n` +
+                    `🔄 System will retry automatically\n` +
+                    `💯 Your data is completely secure!\n\n` +
+                    `🎯 JKWI team will process your application manually if needed.`;
+            }
+            
+            alert('🟠 ' + errorMessage);
+        } finally {
+            // Reset button
+            submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
+            submitButton.style.background = 'linear-gradient(135deg, #27ae60, #2ecc71)';
+        }
+    });
+
+    // Progress tracking functionality
+    function updateProgress() {
+        const form = document.getElementById('membershipForm');
+        const inputs = form.querySelectorAll('input[required], select[required]');
+        let filledInputs = 0;
+        
+        inputs.forEach(input => {
+            if (input.type === 'checkbox' || input.type === 'radio') {
+                if (input.checked) filledInputs++;
+            } else {
+                if (input.value.trim() !== '') filledInputs++;
+            }
         });
+        
+        const progress = (filledInputs / inputs.length) * 100;
+        const progressBar = document.getElementById('progressFill');
+        if (progressBar) {
+            progressBar.style.width = progress + '%';
+        }
+    }
 
-        // Event listeners for progress tracking
-        document.querySelectorAll('input, select, textarea').forEach(element => {
-            element.addEventListener('input', updateProgress);
-            element.addEventListener('change', updateProgress);
+    // Division selection functionality
+    document.querySelectorAll('.division-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.division-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) radio.checked = true;
+            updateProgress();
         });
+    });
 
-        // Initialize progress
-        setTimeout(updateProgress, 1000);
+    // Event listeners for progress tracking
+    document.querySelectorAll('input, select, textarea').forEach(element => {
+        element.addEventListener('input', updateProgress);
+        element.addEventListener('change', updateProgress);
+    });
 
-        // Update page title with cloud status
-        setInterval(() => {
-            const baseTitle = 'JKWI Membership Application';
-            const status = cloudConnectionManager.isConnected() ? '☁️ Cloud Online' : '🔴 Cloud Offline';
-            document.title = `${baseTitle} - ${status}`;
-        }, 10000);
+    // Initialize progress
+    setTimeout(updateProgress, 1000);
 
-        console.log('✅ JKWI Cloud Application System fully initialized!');
-        console.log('☁️ System ready for global applicant access');
-    </script>
+    // Update page title with system status
+    setInterval(() => {
+        const baseTitle = 'JKWI Membership Application';
+        const status = connectionManager.isConnected() ? '🟢 System Online' : '🔴 Offline Mode';
+        document.title = `${baseTitle} - ${status}`;
+    }, 10000);
+
+    console.log('✅ JKWI Repository-Based System fully initialized!');
+    console.log('🌍 Ready for global applicant access via GitHub repository!');
+</script>
 </body>
 </html>
+
+# JKWI Membership System - Complete Deployment Guide
+
+## 🚀 Quick Start
+
+### Option 1: Local Development
+
+1. **Install Node.js** (version 14 or higher)
+2. **Navigate to the API directory:**
+   ```bash
+   cd INFORMATION-MANAGEMENT-SYSTEM/api
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+4. **Start the server:**
+   ```bash
+   npm start
+   ```
+
+5. **Access the application:**
+   - Open browser: `http://localhost:3001`
+   - Health check: `http://localhost:3001/api/health`
+
+### Option 2: Cloud Deployment (Heroku)
+
+1. **Prepare for deployment:**
+   ```bash
+   cd INFORMATION-MANAGEMENT-SYSTEM/api
+   git init
+   git add .
+   git commit -m "Initial JKWI membership system"
+   ```
+
+2. **Deploy to Heroku:**
+   ```bash
+   heroku create jkwi-membership-system
+   git push heroku main
+   heroku open
+   ```
+
+### Option 3: Vercel Deployment
+
+1. **Install Vercel CLI:**
+   ```bash
+   npm install -g vercel
+   ```
+
+2. **Deploy:**
+   ```bash
+   cd INFORMATION-MANAGEMENT-SYSTEM/api
+   vercel --prod
+   ```
+
+## 📁 Data Storage Structure
+
+```
+INFORMATION-MANAGEMENT-SYSTEM/
+├── MEMBERS/           # Approved member records
+├── APPLICATIONS/      # All membership applications  
+├── USERS/            # User account records
+└── api/              # Backend server files
+```
+
+## 🔧 Configuration
+
+### Environment Variables (.env)
+```env
+PORT=3001
+NODE_ENV=production
+ADMIN_EMAIL=admin@jkwi.com
+```
+
+## 📊 API Endpoints
+
+- `GET /api/health` - System health check
+- `POST /api/membership/submit` - Submit membership application
+- `GET /api/application/:id` - Check application status
+- `GET /api/applications` - List all applications (admin)
+- `GET /api/users` - List all users (admin)
+- `POST /api/application/:id/approve` - Approve application (admin)
+
+## 🎯 Features
+
+✅ **Repository-Based Storage**: All data stored in GitHub repository
+✅ **User Account Creation**: Automatic user accounts for applicants
+✅ **Application Tracking**: Unique IDs and status tracking
+✅ **Offline Support**: Local backup when system is offline
+✅ **Global Access**: Works from any device, anywhere
+✅ **Admin Dashboard**: Built-in application management
+✅ **Data Export**: JSON format for easy integration
+
+## 🌍 Global Access
+
+Once deployed, applicants can access the system from anywhere:
+- **Mobile Devices**: Fully responsive design
+- **Any Browser**: Works on all modern browsers
+- **Offline Mode**: Applications saved locally if offline
+- **Real-time Status**: Connection indicators and health checks
+
+## 🔒 Security Features
+
+- Input validation and sanitization
+- CORS protection
+- Error handling without data exposure
+- Local backup encryption
+- Application status tracking
+
+## 📞 Support
+
+For technical support or deployment assistance:
+- Check the logs: `npm run logs`
+- Test the system: `npm test`
+- Health check: Visit `/api/health`
+
+---
+
+**🎉 Your JKWI membership system is now ready for global access!**
