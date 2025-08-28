@@ -34,6 +34,7 @@
                 gap: 6px;
                 margin-top: 12px;
                 overflow-x: auto;
+                   scroll-behavior: smooth;
             }
             .division-logos img {
                 width: 40px;
@@ -43,7 +44,15 @@
                 border-radius: 6px;
                 box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.07);
                 padding: 2px;
+                   transition: transform 0.3s cubic-bezier(.4,2,.6,1), box-shadow 0.3s;
+                   cursor: pointer;
+                   z-index: 1;
             }
+                .division-logos img.active {
+                    transform: scale(2.2);
+                    z-index: 10;
+                    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+                }
         h1 {
             text-align: center;
             font-size: 1.6rem;
@@ -163,7 +172,7 @@
         <div class="footer">
             Thank you for choosing JK Winners Investment (Pty)Ltd.<br>
             For any queries, contact us at <a href="mailto:info@jkwinnersinvestment.co.za">info@jkwinnersinvestment.co.za</a>.
-            <div class="division-logos">
+                <div class="division-logos" id="divisionLogos">
                 <img src="https://github.com/jkwinnersinvestment/JKWI-MAIN/raw/main/DESIGN%20SYSTEM/JKWI%20LOGO/JKWI%20LOGO%20PNG/MINING%20DIVISION.png" alt="Mining Division" title="Mining Division">
                 <img src="https://github.com/jkwinnersinvestment/JKWI-MAIN/raw/main/DESIGN%20SYSTEM/JKWI%20LOGO/JKWI%20LOGO%20PNG/INFASTRUCTURE%20DIVISION.png" alt="Infrastructure Division" title="Infrastructure Division">
                 <img src="https://github.com/jkwinnersinvestment/JKWI-MAIN/raw/main/DESIGN%20SYSTEM/JKWI%20LOGO/JKWI%20LOGO%20PNG/FARMING%20DIVISION.png" alt="Farming Division" title="Farming Division">
@@ -186,5 +195,48 @@
             });
         }
     </script>
+        <script>
+            // Division logo zoom and carousel logic
+            const divisionLogos = document.getElementById('divisionLogos');
+            const logoImgs = divisionLogos.querySelectorAll('img');
+            let activeIdx = null;
+
+            function activateLogo(idx) {
+                logoImgs.forEach((img, i) => {
+                    img.classList.toggle('active', i === idx);
+                });
+                // Scroll the active logo into view, centered if possible
+                logoImgs[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                activeIdx = idx;
+            }
+
+            logoImgs.forEach((img, idx) => {
+                img.addEventListener('click', function(e) {
+                    if (activeIdx === idx) {
+                        // If already active, move to next logo
+                        let nextIdx = (idx + 1) % logoImgs.length;
+                        activateLogo(nextIdx);
+                    } else {
+                        activateLogo(idx);
+                    }
+                });
+                img.addEventListener('touchstart', function(e) {
+                    if (activeIdx === idx) {
+                        let nextIdx = (idx + 1) % logoImgs.length;
+                        activateLogo(nextIdx);
+                    } else {
+                        activateLogo(idx);
+                    }
+                });
+            });
+
+            // Optional: deactivate zoom on click outside
+            document.addEventListener('click', function(e) {
+                if (!divisionLogos.contains(e.target)) {
+                    logoImgs.forEach(img => img.classList.remove('active'));
+                    activeIdx = null;
+                }
+            });
+        </script>
 </body>
 </html>
